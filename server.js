@@ -4,12 +4,11 @@
       suggestedPrice: 9.0
   }
   */
- function lambdaFunction(eventRaw, context) {
-      const priceOkTreshhold = 15; // % of accepted price
-
+ function lambdaFunction(event, context) {
+    const priceOkTreshhold = 15; // % of accepted price
 
     const request = require('request');
-    const event = eventRaw.data;
+    const input = event.data;
       const baseUrl = 'api.cqz1m-softwarea1-d44-public.model-t.cc.commerce.ondemand.com'; // old ccv2
       // const baseUrl = 'dev-com-17.accdemo.b2c.ydev.hybris.com:9002';
       const getPriceFromCatalog = (code) => {
@@ -27,15 +26,15 @@
           });
         })
       }
-    return getPriceFromCatalog(parseInt(event.productCode)).then((result) => {
+    return getPriceFromCatalog(parseInt(input.productCode)).then((result) => {
         console.log('getPriceFromCatalog result', typeof result);
         const price = result.price.value;
-        const suggestedPrice = parseInt(event.suggestedPrice);
+        const suggestedPrice = parseInt(input.suggestedPrice);
         const reducedPrice = price - (price / 100 * priceOkTreshhold);
         const priceOk = suggestedPrice >= reducedPrice;
         // console.log('POST', reducedPrice, suggestedPrice, priceOk);
         return { suggestedPrice: suggestedPrice, priceAccepted: priceOk, productCode: result.code, name: result.name, 
-            version: "v0.2"
+            version: "0.3"
         };
     });
 } 
