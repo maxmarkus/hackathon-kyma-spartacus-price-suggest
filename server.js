@@ -1,16 +1,14 @@
-function lambdaFunction(event, context) {
-  const request = require('request');
-  const priceOkTreshhold = 15; // %
-  // const baseUrl = 'api.cqz1m-softwarea1-d44-public.model-t.cc.commerce.ondemand.com'; // old ccv2
-  const baseUrl = 'dev-com-17.accdemo.b2c.ydev.hybris.com:9002';
-  /*
+/*
   {
       productCode: 300938
       suggestedPrice: 9.0
   }
   */
-
-
+function lambdaFunction(event, context) {
+  const request = require('request');
+  const priceOkTreshhold = 15; // %
+  // const baseUrl = 'api.cqz1m-softwarea1-d44-public.model-t.cc.commerce.ondemand.com'; // old ccv2
+  const baseUrl = 'dev-com-17.accdemo.b2c.ydev.hybris.com:9002';
   const getPriceFromCatalog = (code) => {
     return new Promise((resolve, reject) => {
       const fetchUrl= `https://${baseUrl}/rest/v2/electronics-spa/products/${code}?fields=code,price,name`;
@@ -20,13 +18,12 @@ function lambdaFunction(event, context) {
           console.log('ERROR', error);
           reject(JSON.parse(error));
         }
-        console.log('fetched', typeof body, body);
         console.log('fetched from electronics-spa', JSON.parse(body));
         resolve(JSON.parse(body));
       });
     })
   }
-  console.log('received request', event);
+  
   return getPriceFromCatalog(parseInt(event.productCode)).then((result) => {
     const price = result.price.value;
     const suggestedPrice = parseInt(event.suggestedPrice);
