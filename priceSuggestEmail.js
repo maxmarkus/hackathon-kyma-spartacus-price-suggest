@@ -20,7 +20,6 @@
     installing: INSIDELAMBDA
   */
   function priceSuggestEmail(event, context) {
-    console.log('proc', process.env)
     const priceOkTreshhold = 15; // % of accepted price for immediate ok
 
     // redis
@@ -54,6 +53,7 @@
         return store.get(key).then((old) => {
           const values = (old || []).filter(o => o.email !== value.email);
           values.push(value);
+          console.log('== stored for', key, values.length);
           return store.setList(key, values);
         })
         .catch((e) => {

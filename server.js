@@ -1,6 +1,7 @@
 const priceSuggest = require('./priceSuggest');
 const priceSuggestEmail = require('./priceSuggestEmail');
 const getPriceSuggestions = require('./getPriceSuggestions');
+const priceDropNotify = require('./priceDropNotify');
 
 // BASE SETUP
 // =============================================================================
@@ -40,6 +41,14 @@ router.post('/suggestions', function (req, res) {
   })
 });
 
+router.post('/priceupdated', function (req, res) {
+  priceDropNotify({ data: req.body}).then((lambdaRes) => {
+    res.json(lambdaRes);
+  });
+});
+
+router.post('/priceupdated', function (req, res) {
+});
 // more routes for our API will happen here
 
 // REGISTER OUR ROUTES -------------------------------
