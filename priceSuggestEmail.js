@@ -3,24 +3,41 @@
   {
     "productCode": "3965240",
     "suggestedPrice": "140",
-    "email": "admin+1@kyma.cx"
+    "email": "admin+1@kyma.cx" (optional)
   }
   returns:
     {
-        "productCode": 3965240,
-        "subscribed": true
+        "accepted": true (without email)
+        "subscribed": true (with email)
+        ...
     }
   error to high suggestion:
     {
       "productCode": 3965240,
       "error": "Your pricelimit of 2113 is set to high, you can immediately buy it already for 204"
     }
+
+    installing: INSIDELAMBDA
   */
   function priceSuggestEmail(event, context) {
+    console.log('proc', process.env)
     const priceOkTreshhold = 15; // % of accepted price for immediate ok
 
     // redis
-    const redis = require('./redis');
+    const bluebird = require('bluebird');
+    let redisModule, redis;
+    if (process.env.INSIDELAMBDA) { 
+      redisModule = require('redis');
+      bluebird.promisifyAll(redisModule.RedisClient.prototype);
+      bluebird.promisifyAll(redisModule.Multi.prototype);
+      redis = redisModule.createClient({host: process.env['suggestion-HOST'], port: process.env['suggestion-PORT'], password: process.env['suggestion-REDIS_PASSWORD']});
+    } else {
+      redisModule = require('redis-mock');
+      bluebird.promisifyAll(redisModule.RedisClient.prototype);
+      bluebird.promisifyAll(redisModule.Multi.prototype);
+      redis = redisModule.createClient();
+    }
+
     redis.on('error', function(err){
       console.log('Something went wrong ', err)
     });
@@ -106,10 +123,31 @@
           });
         }
 
+        const version = '0.2';
+
+        if(!input.email) {
+          console.log('getPriceFromCatalog result', typeof result);
+          const price = result.price.value;
+          const suggestedPrice = parseInt(input.suggestedPrice);
+          const reducedPrice = price - (price / 100 * priceOkTreshhold);
+          const priceOk = suggestedPrice >= reducedPrice;
+          // console.log('POST', reducedPrice, suggestedPrice, priceOk);
+          return {
+            suggestedPrice: suggestedPrice,
+            priceAccepted: priceOk,
+            productCode: code,
+            name: result.name, 
+            version: version
+          };
+        }
+
         return addPriceWatch(input).then((res) => {
           return {
+            subscribed: res,
             productCode: code,
-            subscribed: res
+            suggestedPrice: suggestedPrice,
+            name: result.name, 
+            version: version
           }
         });
     });

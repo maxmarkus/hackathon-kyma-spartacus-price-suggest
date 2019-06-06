@@ -1,13 +1,13 @@
 const bluebird = require('bluebird');
-let redis;
+let redisModule, redis;
 if (process.env.PORT) {
-  redis = require('redis');
-  bluebird.promisifyAll(redis.RedisClient.prototype);
-  bluebird.promisifyAll(redis.Multi.prototype);
-  module.exports = redis.createClient({host: process.env.HOST, port: process.env.PORT, password: process.env.REDIS_PASSWORD});
+  redisModule = require('redis');
+  bluebird.promisifyAll(redisModule.RedisClient.prototype);
+  bluebird.promisifyAll(redisModule.Multi.prototype);
+  redis = redisModule.createClient({host: process.env.HOST, port: process.env.PORT, password: process.env.REDIS_PASSWORD});
 } else {
-  redis = require('redis-mock');
-  bluebird.promisifyAll(redis.RedisClient.prototype);
-  bluebird.promisifyAll(redis.Multi.prototype);
-  module.exports = redis.createClient();
+  redisModule = require('redis-mock');
+  bluebird.promisifyAll(redisModule.RedisClient.prototype);
+  bluebird.promisifyAll(redisModule.Multi.prototype);
+  redis = redisModule.createClient();
 }
