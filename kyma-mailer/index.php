@@ -12,7 +12,7 @@ function debug($value) {
 
 //    print_r($data);
 //    die;
-$from = "markus@edenhauser.com"; 
+$from = "sender-email@nowhere.tld"; 
 
 //end of message 
 $headers  = "From: $from\r\n"; 
