@@ -10,7 +10,7 @@
     const log = (a,b,c,d,e,g) => {
       console.log('=='+ a,b,c,d,e,g);
     }
-    const version = '0.3';
+    const version = '0.4';
     log('version', version);
     const event = eventRaw.data;
     
@@ -38,9 +38,8 @@
         return redis.getAsync(key)
           .then(res => {
             console.log('== received from redis', res);
-            return res;
-          }))
-          .then(res => (JSON.parse(res)))
+            return JSON.parse(res);
+          })
           .catch((e) => {
             console.error('getAsync error', e);
             return false;
