@@ -36,7 +36,7 @@ router.post('/suggestemail', function (req, res) {
 
 router.post('/suggestions', function (req, res) {
   getPriceSuggestions({ data: req.body}).then((lambdaRes) => {
-    res.json({lambdaRes});
+    res.json(lambdaRes);
   })
 });
 
