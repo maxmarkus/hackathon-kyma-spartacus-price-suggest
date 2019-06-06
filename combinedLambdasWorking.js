@@ -86,7 +86,7 @@
 
         var options = {
           method: 'POST',
-          url: 'https://edenhauser.com/kyma-mailer/',
+          url: 'https://..../kyma-mailer/',
           headers: 
           {
             // Connection: 'keep-alive',
