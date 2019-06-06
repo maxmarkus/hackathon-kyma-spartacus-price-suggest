@@ -129,7 +129,7 @@
       const product = data[1];
       log('store for', event.code, 'has', entries.length, 'subscribers');
       return {
-        entries: (entries || []).filter(e => parseInt(e.price) >= event.newPrice),
+        entries: (entries || []).filter(e => parseInt(e.price) >= event.newPrice),
         product: product
       };
     })
