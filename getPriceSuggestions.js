@@ -31,6 +31,7 @@
     redis.on('error', function(err){
       console.log('Something went wrong ', err)
     });
+
     const store = {
       get: (key) => {
         return redis.getAsync(key)
@@ -65,7 +66,32 @@
       }
     }
 
-    return store.get(input.productCode);
+    
+    const fetchStore = (key) => {
+      return new Promise((resolve) => {
+        console.log('store fetching', key);
+        store.get(key).then(val => {
+          console.log('store fetched', key, val);
+          resolve({
+            code: key,
+            subscribers: val
+          });
+        })
+      });
+    };
+
+    return fetchStore(input.code);
+    
+    // const promises = [];
+    // redis.keysAsync('*').then(keys => {
+    //   keys.forEach(key => {
+    //     promises.push(fetchStore(key));
+    //   });
+    // });
+    // return Promise.all(promises).then((results) => {
+    //   console.log('results', results);
+    //   return results;
+    // });
   } 
 
 

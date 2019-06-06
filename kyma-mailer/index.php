@@ -1,7 +1,12 @@
 <?php
+
+function debug($value) {
+    file_put_contents('log.txt', $value . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
    //change this to your email. 
    $data = $_REQUEST;
    if(!isset($data['hidden-secret'])) {
+       debug('error, the hidden secret is not defined. not allowed.');
        die('you are not allowed to access this.');
    }
 
@@ -19,7 +24,7 @@ $content = <<<HEREDOC
 Price for ${data['code']} has dropped.
 
 <div style="margin-top: 10px; color: orange; font-size: 20px">
-Your new price: ${data['price']}
+Your new price: ${data['price']} USD
 </div>
 
 <div style="margin-top: 10px">
@@ -36,8 +41,9 @@ ${data['description']}
 </div>
 </div>
 HEREDOC;
-    // now lets send the email. 
+// now lets send the email. 
 $success = mail($data['email'], 'Price has been reduced', $content, $headers); 
+debug(date("Y-m-d H:i:s") . ' : ' . $data['code'] . ' : '.$data['email'] . ' : sent: '. (string)$success);
 if (!$success) {
     header("HTTP/1.1 400 Bad Request");
     echo 'error: ';
